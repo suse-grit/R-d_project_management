@@ -33,9 +33,9 @@ class UserLoginView(View):
                 login(request, user)
                 return HttpResponseRedirect(reverse('index'))
             else:
-                return render(request, 'users/login.html', {'msg': '账号或密码错误'})
+                return render(request, 'users/login.html', {'msg': 'no'})
         else:
-            return render(request, 'users/login.html', {'msg': '账号或密码错误', 'login_form': login_form})
+            return render(request, 'users/login.html', {'msg': 'no', 'login_form': login_form})
 
 
 # 用户退出

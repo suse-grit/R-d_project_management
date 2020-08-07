@@ -6,7 +6,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 将apps加入到sources root列表中
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '74+-r=c=(lv+%n1@&o$hu6c@2mrkv9l^90iailhhzlrjmk)k^j'
 
@@ -34,7 +33,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -63,10 +62,11 @@ WSGI_APPLICATION = 'zcgl.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zcgl',
-        'USER': 'scott',
-        'PASSWORD': 'tiger',
-        'HOST': '192.168.0.72',
+        'NAME': 'project_manage',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
@@ -85,7 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
 TIME_ZONE = 'Asia/Shanghai'
 
@@ -99,12 +99,12 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 # 部署到生产中将此选项注释
-STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, 'static')
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static')
+# ]
 
-# 部署到生产中将此选项注释取消
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = '/home/ubuntu/project_static'
 
 # 扩展django自带的user model，添加字段
 AUTH_USER_MODEL = 'users.UserProfile'
@@ -124,3 +124,10 @@ handler404 = 'users.views.page_not_found'
 
 # 全局500配置，名称必须是handler500
 handler500 = 'users.views.page_error'
+
+# 邮箱配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 邮件发送配置，固定写法
+EMAIL_HOST = 'smtp.qq.com'  # 对应厂家的SMTP服务器地址
+EMAIL_PORT = 25  # SMTP服务的默认端口
+EMAIL_HOST_USER = '1129212285@qq.com'  # 发送邮件的QQ邮箱
+EMAIL_HOST_PASSWORD = 'bexjzxkokzhhhhfc'  # 邮箱授权码

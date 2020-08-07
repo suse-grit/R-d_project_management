@@ -1,62 +1,93 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}资产管理 - 资产列表{% endblock %}
+{% block title %}项目管理 - 项目列表{% endblock %}
 {% block custome_css %}{% endblock %}
 {% block content %}
     <div class="content">
-        <p>资产列表</p>
+        <p>在研项目概况</p>
         <div class="form-class">
             <form action="" method="get">
-                <input id="search" class="form-text" type="text" placeholder="搜索..." name="search" value="{% if search %}{{ search }}{% endif %}"/>
+                <input id="search" class="form-text" type="text" placeholder="快速查询..." name="search"
+                       value="{% if search %}{{ search }}{% endif %}"/>
                 <button class="form-submit" type="submit">
                     <i class='fa fa-search' aria-hidden='true'></i>
                 </button>
             </form>
         </div>
         {% if request.user.isadmin == '1' or request.user.is_superuser == 1 %}
-            <button class="button-insert" id="btn_add">添加资产</button>
-            <button class="button-insert" id="btn_export_list">导出列表</button>
+            <button class="button-insert" id="btn_add">新增项目</button>
+            <button class="button-insert" id="btn_export_list">导出Excel</button>
         {% endif %}
         <br/><br/>
         <table class="table-list">
             <thead>
-                <tr>
-                    <th>序号</th>
-                    <th>资产类型</th>
-                    <th>IP地址</th>
-                    <th>功能描述</th>
-                    <th>设备品牌</th>
-                    <th>设备型号</th>
-                    <th>设备序号</th>
-                    <th>设备配置</th>
-                    <th>管理人员</th>
-                    <th>所在网络</th>
-                    <th>保修期</th>
-                    <th>备注</th>
-                </tr>
+            <tr>
+                <th>序号</th>
+                <th>项目类型</th>
+                <th>项目名称</th>
+                <th>开发令号</th>
+                <th>项目概述</th>
+                <th>项目负责人</th>
+                <th>开始时间</th>
+                <th>完成时间</th>
+                <th>项目现状</th>
+                <th>项目倒计时</th>
+                <th>项目级别</th>
+                <th>延期风险</th>
+                <th>备注</th>
+            </tr>
             </thead>
             <tbody>
-                {% for server in p_servers.object_list %}
-                    <tr>
-{#                        <td>{{ forloop.counter|add:start }}</td>#}
-                        <td>{{ server.id }}</td>
-                        {% if request.user.isadmin == '1' or request.user.is_superuser == 1 %}
-                            <td><a href="{% url 'servers:server_detail' server.id %}">{{ server.zctype }}</a></td>
+            {% for server in p_servers.object_list %}
+                {% if server.undernet == '1' %}
+                    <tr style="text-align: center;background-color: orange">
                         {% else %}
-                            <td>{{ server.zctype }}</td>
-                        {% endif %}
-                        <td>{{ server.ipaddress }}</td>
-                        <td>{{ server.description }}</td>
-                        <td>{{ server.brand }}</td>
-                        <td>{{ server.zcmodel }}</td>
-                        <td>{{ server.zcnumber }}</td>
-                        <td>{{ server.zcpz }}</td>
-                        <td>{{ server.owner.username }}</td>
-                        <td>{{ server.undernet }}</td>
-                        <td>{{ server.guartime }}</td>
-                        <td><div class="more-text">{{ server.comment }}</div></td>
-                    </tr>
-                {% endfor %}
+                    <tr style="text-align: center;background-color: #90EE90">
+                {% endif %}
+
+            <td>{{ server.id }}</td>
+            <td>{{ server.zctype }}</td>
+            {% if request.user.isadmin == '1' or request.user.is_superuser == 1 %}
+                <td><a href="{% url 'servers:server_detail' server.id %}">{{ server.ipaddress }}</a></td>
+            {% else %}
+                <td>{{ server.ipaddress }}</td>
+            {% endif %}
+            <td>{{ server.brand }}</td>
+            <td style="text-align: justify">{{ server.description }}</td>
+            <td>{{ server.owner.username }}</td>
+            <td>{{ server.zcmodel }}</td>
+            <td>{{ server.zcnumber }}</td>
+            <td>{{ server.zcpz }}</td>
+            {% if server.undernet == '1' %}
+                <td class="get_time" style="color: red;font-weight: bolder">{{ server.zcnumber }}</td>
+                <td>{{ server.guartime }}</td>
+                <td style="color: red;font-weight: bolder">已有风险</td>
+                {% if server.warn_times == 0 %}
+                    <td>
+                        <button style="background-color: yellow" onclick="send_warn_message(this,{{ server.id }})"
+                                title="向项目责任人发送警示邮件">
+                            邮件预警
+                        </button>
+                    </td>
+                {% else %}
+                    <td>
+                        <button style="background-color: yellow" onclick="send_warn_message(this,{{ server.id }})"
+                                title="再次向项目责任人发送警示邮件">
+                            已预警{{ server.warn_times }}次
+                        </button>
+                    </td>
+                {% endif %}
+
+            {% else %}
+                <td class="get_time">{{ server.zcnumber }}</td>
+                <td>{{ server.guartime }}</td>
+                <td>暂无风险</td>
+                <td>
+                    <div class="more-text">{{ server.comment }}</div>
+                </td>
+            {% endif %}
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
         <div class="page">
@@ -67,7 +98,8 @@
                 {% for page in p_servers.pages %}
                     {% if page %}
                         {% ifequal page p_servers.number %}
-                            <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                            <li class="active" style="border-radius: 8px"><a
+                                    href="?{{ page.querystring }}">第{{ page }}页</a></li>
                         {% else %}
                             <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
                         {% endifequal %}
@@ -90,10 +122,38 @@
         };
 
         var btn_export_list = document.getElementById("btn_export_list");
-        btn_export_list.onclick = function() {
+        btn_export_list.onclick = function () {
             var search = document.getElementById("search").value;
             var url = "{% url 'servers:server_export' %}";
             location.href = url + '?search=' + search;
+        };
+        {#获取倒计时#}
+        var times = document.getElementsByClassName('get_time');
+        for (var i = 0; i < times.length; i++) {
+            var old_time = times[i].innerHTML;
+            var myDate = new Date();
+            times[i].innerHTML = Math.floor((new Date(old_time) - myDate.getTime()) / (24 * 3600 * 1000)) + '天';
+        }
+    </script>
+    <script src="{% static 'servers/js/jquery-1.11.3.js' %}"></script>
+    {#    项目预警#}
+    <script>
+        function send_warn_message(btn, id) {
+            $.ajax({
+                type: 'GET',
+                url: BASE_ULR + 'servers/send_mail?id=' + id,
+                success: function (response) {
+                    if (response.code == 200) {
+                        btn.innerHTML = '已预警' + response.times + '次';
+                        alert('已发送如下消息到项目负责人邮箱：\n' + response.data)
+                    } else {
+                        alert('对不起！服务器繁忙,请稍后重试~')
+                    }
+                },
+                error: function () {
+                    alert('对不起！服务器繁忙,请稍后重试~')
+                }
+            })
         }
     </script>
 {% endblock %}

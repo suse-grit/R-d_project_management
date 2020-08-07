@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}资产管理 - 人员列表{% endblock %}
+{% block title %}项目管理 - 研发人员{% endblock %}
 {% block custome_css %}
 {% endblock %}
 {% block content %}
     <div class="content">
-        <p>人员列表</p>
+        <p>研发人员列表</p>
         <div class="form-class">
             <form action="" method="get">
-                <input id="search" class="form-text" type="text" placeholder="搜索..." name="search" value="{% if search %}{{ search }}{% endif %}"/>
+                <input id="search" class="form-text" type="text" placeholder="快速搜索..." name="search"
+                       value="{% if search %}{{ search }}{% endif %}"/>
                 <button class="form-submit" type="submit">
                     <i class='fa fa-search' aria-hidden='true'></i>
                 </button>
@@ -19,21 +20,22 @@
         <br/><br/>
         <table class="table-list">
             <thead>
-                <tr>
-                    <th>序号</th>
-                    <th>姓名</th>
-                    <th>工号</th>
-                    <th>部门</th>
-                    <th>办公电话</th>
-                    <th>手机号码</th>
-                    <th>公司邮箱</th>
-                    <th>管理员</th>
-                    <th>在职</th>
-                </tr>
+            <tr>
+                <th>序号</th>
+                <th>姓名</th>
+                <th>工号</th>
+                <th>研发中心</th>
+                <th>办公电话</th>
+                <th>私人电话</th>
+                <th>个人邮箱</th>
+                <th>管理员</th>
+                <th>是否在职</th>
+            </tr>
             </thead>
-            <tbody>
-                {% for user in p_users.object_list %}
-                    <tr>
+            <tbody style="text-align: center;">
+            {% for user in p_users.object_list %}
+                {% if user.get_is_staff_display == '否' %}
+                    <tr style="background-color: silver">
                         <td>{{ forloop.counter|add:start }}</td>
                         <td><a href="{% url 'users:user_detail' user.id %}">{{ user.username }}</a></td>
                         <td>{{ user.staff_no }}</td>
@@ -44,7 +46,22 @@
                         <td>{{ user.get_isadmin_display }}</td>
                         <td>{{ user.get_is_staff_display }}</td>
                     </tr>
-                {% endfor %}
+                {% endif %}
+                {% if user.get_is_staff_display == '是' %}
+                    <tr style="background-color: seashell">
+                        <td>{{ forloop.counter|add:start }}</td>
+                        <td><a href="{% url 'users:user_detail' user.id %}">{{ user.username }}</a></td>
+                        <td>{{ user.staff_no }}</td>
+                        <td>{{ user.department }}</td>
+                        <td>{{ user.bg_telephone }}</td>
+                        <td>{{ user.mobile }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.get_isadmin_display }}</td>
+                        <td style="background-color: greenyellow">{{ user.get_is_staff_display }}</td>
+                    </tr>
+                {% endif %}
+
+            {% endfor %}
             </tbody>
         </table>
         <div class="page">
@@ -78,7 +95,7 @@
         };
 
         var btn_export_list = document.getElementById("btn_export_list");
-        btn_export_list.onclick = function() {
+        btn_export_list.onclick = function () {
             var search = document.getElementById("search").value;
             var url = "{% url 'users:user_export' %}";
             location.href = url + '?search=' + search;

@@ -1,22 +1,31 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}资产管理 - 添加人员{% endblock %}
+{% block title %}研发组织 - 添加人员{% endblock %}
 {% block custome_css %}
     <link rel="stylesheet" href="{% static 'servers/css/server-add.css' %}">
 {% endblock %}
 {% block content %}
     <div class="content">
-        <p class="content-note1">添加人员<span class="content-note2"> (标注为*为必填项)</span></p>
+        <p class="content-note1">新增研发人员<span class="content-note2"></span></p>
         <div style="clear:both"></div>
         <form class="form-table" action="{% url 'users:user_add' %}" method="post">
             <div class="form-list">
-                <span>*姓名</span><input {% if userinfo_form.errors.username %}class="input-error"{% endif %} type="text" name="username"/>
+                <span>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</span><input {% if userinfo_form.errors.username %}class="input-error"{% endif %} type="text" name="username"/>
             </div>
             <div class="form-list">
-                <span>工号</span><input {% if userinfo_form.errors.staff_no %}class="input-error"{% endif %} type="text" name="staff_no"  placeholder="不超过15个字符"/>
+                <span>工&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</span><input {% if userinfo_form.errors.staff_no %}class="input-error"{% endif %} type="text" name="staff_no"  placeholder="不超过15个字符"/>
             </div>
+{#            <div class="form-list">#}
+{#                <span>研发中心</span><input {% if userinfo_form.errors.department %}class="input-error"{% endif %} type="text" name="department" placeholder="不超过15个字符"/>#}
+{#            </div>#}
             <div class="form-list">
-                <span>部门</span><input {% if userinfo_form.errors.department %}class="input-error"{% endif %} type="text" name="department" placeholder="不超过15个字符"/>
+                <span>研发中心</span>
+                <select name="department">
+                    <option value="综合管理中心">综合管理中心</option>
+                    <option value="农机研发中心" selected>农机研发中心</option>
+                    <option value="通机研发中心" >通机研发中心</option>
+                    <option value="研究院实验室" >研究院实验室</option>
+                </select>
             </div>
             <div class="form-list">
                 <span>办公电话</span><input {% if userinfo_form.errors.bg_telephone %}class="input-error"{% endif %} type="text" name="bg_telephone" placeholder="不超过12个字符，区号用-隔开"/>
@@ -25,10 +34,10 @@
                 <span>手机号码</span><input {% if userinfo_form.errors.mobile %}class="input-error"{% endif %} type="text" name="mobile" placeholder="不超过11个字符"/>
             </div>
             <div class="form-list">
-                <span>公司邮箱</span><input type="text" name="email" placeholder="不超过30个字符"/>
+                <span>个人邮箱</span><input type="text" name="email" placeholder="不超过30个字符"/>
             </div>
             <div class="form-list">
-                <span>管理员</span>
+                <span>管&nbsp;&nbsp;理&nbsp;&nbsp;员</span>
                 <select name="isadmin">
                     <option value="1">是</option>
                     <option value="0" selected>否</option>
